@@ -3,21 +3,23 @@
 #include <HTTPClient.h>
 #include <FS.h>
 #include <SPIFFS.h>
-#include <map.h>
+#include <map>
 
 struct MultipartMessage
 {
 public:
-	std::map<std::string, std::string> otherData;		//list containing key-value pairs for message parts other than the file
-	std::string filename;	
+	std::map< const char*, const char*> otherData;		//list containing key-value pairs for message parts other than the file
+	 const char* filename;
+	 const char* contentType = "image/jpeg";
 	File * file;
 };
 
 class Uploader
 {
 private:
-	FS *_tempfileFS = &SPIFFS;
 	const char * _URL;
+
+	FS *_tempfileFS = &SPIFFS;
 	bool _https;
 	const char * _cert;
 
