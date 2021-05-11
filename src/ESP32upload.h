@@ -10,6 +10,7 @@ struct MultipartMessage
 public:
 	std::map< const char*, const char*> otherData;		//list containing key-value pairs for message parts other than the file
 	 const char* filename;
+	 const char* name;
 	 const char* contentType = "image/jpeg";
 	File * file;
 };

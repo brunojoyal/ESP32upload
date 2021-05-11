@@ -52,10 +52,11 @@ int Uploader::send(MultipartMessage message)
 			it++;
 		}
 
-		tempfile.printf("Content-Disposition: form-data; name=\"attachment\"; filename=\"%s\"\r\n", message.filename);
+		tempfile.printf("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\n", message.name, message.filename);
 		tempfile.printf("Content-Type: %s\r\n", message.contentType);
 		tempfile.print("\r\n");
 		uint8_t buf[256];
+		Serial.printf("File has length %u\n", message.file->size());
 		while (message.file->available())
 		{
 			int read = message.file->read(buf, 256);
@@ -63,14 +64,16 @@ int Uploader::send(MultipartMessage message)
 			vTaskDelay(1);
 		}
 		message.file->close();
+		tempfile.print("\r\n");
 		tempfile.print("----abcdefg--\r\n");
 		tempfile.flush();
 		tempfile.close();
-		myClient.addHeader("Content-Type", "multipart/form-data; boundary=--abcdefg");
+		myClient.addHeader("Content-Type", "multipart/form-data; boundary=\"--abcdefg\"");
 		tempfile = _tempfileFS->open("/tempfile.temp");
 
 		if (tempfile)
 		{
+			Serial.printf("Sending tempfile of length %u\n", tempfile.size());
 			responseCode = myClient.sendRequest("POST", &tempfile, tempfile.size());
 			while (myClient.getStream().available())
 			{
