@@ -33,6 +33,7 @@ public:
 	Uploader(const char *URL, const char *cert);
 	Uploader(const char *URL, const char *cert, FS *tempfileFS);
 	int send(MultipartMessage message);
+	void set(const char *URL);
 };
 
 #endif

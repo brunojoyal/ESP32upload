@@ -16,6 +16,10 @@ Uploader::Uploader(const char *URL, const char *cert, FS *tempfileFS) : _URL(URL
 {
 }
 
+void Uploader::set(const char *URL){
+	_URL = URL;
+}
+
 int Uploader::send(MultipartMessage message)
 {
 
