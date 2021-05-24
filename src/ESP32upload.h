@@ -5,7 +5,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <FS.h>
-#include <SPIFFS.h>
+#include <LITTLEFS.h>
 #include <map>
 
 struct MultipartMessage
@@ -23,7 +23,7 @@ class Uploader
 private:
 	const char *_URL;
 
-	FS *_tempfileFS = &SPIFFS;
+	FS *_tempfileFS = &LITTLEFS;
 	bool _https;
 	const char *_cert;
 
