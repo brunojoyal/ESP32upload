@@ -8,6 +8,13 @@
 #include <LITTLEFS.h>
 #include <map>
 
+#define BUFLEN 10*1024
+
+struct Result{
+	int responseCode;
+	size_t fileSize;
+};
+
 struct MultipartMessage
 {
 public:
@@ -22,7 +29,7 @@ class Uploader
 {
 private:
 	const char *_URL;
-
+	uint8_t buf[BUFLEN];
 	FS *_tempfileFS = &LITTLEFS;
 	bool _https;
 	const char *_cert;
@@ -32,8 +39,11 @@ public:
 	Uploader(const char *URL, FS *tempfileFS);
 	Uploader(const char *URL, const char *cert);
 	Uploader(const char *URL, const char *cert, FS *tempfileFS);
-	int send(MultipartMessage message);
+	Result send(MultipartMessage message);
 	void set(const char *URL);
 };
+
+
+
 
 #endif

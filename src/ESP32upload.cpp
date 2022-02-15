@@ -20,8 +20,9 @@ void Uploader::set(const char *URL){
 	_URL = URL;
 }
 
-int Uploader::send(MultipartMessage message)
+Result Uploader::send(MultipartMessage message)
 {
+	size_t tempfileSize;
 
 	HTTPClient myClient;
 	int responseCode = 0;
@@ -59,13 +60,12 @@ int Uploader::send(MultipartMessage message)
 		tempfile.printf("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\n", message.name, message.filename);
 		tempfile.printf("Content-Type: %s\r\n", message.contentType);
 		tempfile.print("\r\n");
-		uint8_t buf[256];
+
 		Serial.printf("File has length %u\n", message.file->size());
 		while (message.file->available())
 		{
-			int read = message.file->read(buf, 256);
+			int read = message.file->read(buf, BUFLEN);
 			tempfile.write(buf, read);
-			vTaskDelay(1);
 		}
 		message.file->close();
 		tempfile.print("\r\n");
@@ -74,10 +74,11 @@ int Uploader::send(MultipartMessage message)
 		tempfile.close();
 		myClient.addHeader("Content-Type", "multipart/form-data; boundary=\"--abcdefg\"");
 		tempfile = _tempfileFS->open("/tempfile.temp");
+		tempfileSize = tempfile.size();
 
 		if (tempfile)
 		{
-			Serial.printf("Sending tempfile of length %u\n", tempfile.size());
+			Serial.printf("Sending tempfile of length %u\n", tempfileSize);
 			responseCode = myClient.sendRequest("POST", &tempfile, tempfile.size());
 			while (myClient.getStream().available())
 			{
@@ -87,5 +88,8 @@ int Uploader::send(MultipartMessage message)
 	}
 
 	myClient.end();
-	return responseCode;
+	Result result;
+	result.responseCode = responseCode;
+	result.fileSize = tempfileSize;
+	return result;
 }
