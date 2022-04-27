@@ -5,7 +5,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <FS.h>
-#include <LITTLEFS.h>
+#include <LittleFS.h>
 #include <map>
 
 #define BUFLEN 10*1024
@@ -30,7 +30,7 @@ class Uploader
 private:
 	const char *_URL;
 	uint8_t buf[BUFLEN];
-	FS *_tempfileFS = &LITTLEFS;
+	FS *_tempfileFS = &LittleFS;
 	bool _https;
 	const char *_cert;
 
