@@ -8,7 +8,7 @@
 #include <LittleFS.h>
 #include <map>
 
-#define BUFLEN 10*1024
+#define BUFLEN 512
 
 struct Result{
 	int responseCode;

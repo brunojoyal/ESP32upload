@@ -61,7 +61,7 @@ Result Uploader::send(MultipartMessage message)
 		tempfile.printf("Content-Type: %s\r\n", message.contentType);
 		tempfile.print("\r\n");
 
-		Serial.printf("File has length %u\n", message.file->size());
+		log_v("File has length %u\n", message.file->size());
 		while (message.file->available())
 		{
 			int read = message.file->read(buf, BUFLEN);
@@ -78,12 +78,8 @@ Result Uploader::send(MultipartMessage message)
 
 		if (tempfile)
 		{
-			Serial.printf("Sending tempfile of length %u\n", tempfileSize);
+			log_v("Sending tempfile of length %u\n", tempfileSize);
 			responseCode = myClient.sendRequest("POST", &tempfile, tempfile.size());
-			while (myClient.getStream().available())
-			{
-				Serial.write(myClient.getStream().read());
-			}
 		}
 	}
 
